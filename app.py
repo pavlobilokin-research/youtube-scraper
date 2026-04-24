@@ -124,7 +124,7 @@ div[data-testid="metric-container"] {
     padding: 1rem 1.2rem;
 }
 div[data-testid="metric-container"] label {
-    color: #6b6b88 !important;
+    color: #f5f5f5 !important;
     font-family: 'DM Mono', monospace !important;
     font-size: 0.72rem !important;
     letter-spacing: 0.1em;
