@@ -290,6 +290,7 @@ st.markdown("""
 <div class="yt-title">Mine <em>every</em><br>comment.</div>
 <div class="yt-sub">
   Введи запит → натисни кнопку → завантаж JSON<br>
+  API ключ зберігається в Streamlit Secrets — у браузер не потрапляє
 </div>
 """, unsafe_allow_html=True)
 
