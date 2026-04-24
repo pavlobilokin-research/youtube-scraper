@@ -53,7 +53,7 @@ html, body, [class*="css"] {
 
 /* Input overrides */
 div[data-testid="stTextInput"] input {
-    background: #16161f !important;
+    background: #f5f5f5 !important;
     border: 1px solid #2a2a3a !important;
     border-radius: 11px !important;
     color: #f5f5f5 !important;
@@ -61,7 +61,7 @@ div[data-testid="stTextInput"] input {
     padding: 0.8rem 1rem !important;
 }
 div[data-testid="stTextInput"] input:focus {
-    border-color: #ff2d55 !important;
+    border-color: #f5f5f5 !important;
     box-shadow: 0 0 0 3px rgba(255,45,85,0.12) !important;
 }
 
