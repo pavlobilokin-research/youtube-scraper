@@ -65,6 +65,12 @@ div[data-testid="stTextInput"] input:focus {
     box-shadow: 0 0 0 3px rgba(255,45,85,0.12) !important;
 }
 
+/* Input & slider labels */
+div[data-testid="stTextInput"] label,
+div[data-testid="stSlider"] label {
+    color: #f5f5f5 !important;
+}
+
 /* Slider */
 div[data-testid="stSlider"] > div > div > div {
     background: #ff2d55 !important;
