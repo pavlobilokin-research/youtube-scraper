@@ -56,7 +56,7 @@ div[data-testid="stTextInput"] input {
     background: #16161f !important;
     border: 1px solid #2a2a3a !important;
     border-radius: 11px !important;
-    color: #f0f0f8 !important;
+    color: #f5f5f5 !important;
     font-family: 'DM Mono', monospace !important;
     padding: 0.8rem 1rem !important;
 }
