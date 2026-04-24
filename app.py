@@ -46,7 +46,7 @@ html, body, [class*="css"] {
 .yt-sub {
     font-family: 'DM Mono', monospace;
     font-size: 0.85rem;
-    color: #6b6b88;
+    color: #f2f2f5;
     line-height: 1.7;
     margin-bottom: 2.5rem;
 }
@@ -166,7 +166,6 @@ st.markdown("""
 <div class="yt-title">Mine <em>every</em><br>comment.</div>
 <div class="yt-sub">
   Введи запит → натисни кнопку → завантаж JSON.<br>
-  API ключ зберігається в Streamlit Secrets — у браузер не потрапляє.
 </div>
 """, unsafe_allow_html=True)
 
