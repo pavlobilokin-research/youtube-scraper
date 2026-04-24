@@ -1,0 +1,45 @@
+name: Scrape YouTube Comments
+
+on:
+  workflow_dispatch:
+    inputs:
+      query:
+        description: "YouTube search query"
+        required: true
+        type: string
+      max_videos:
+        description: "Max videos to scrape (1–100)"
+        required: true
+        default: "10"
+        type: string
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install google-api-python-client
+
+      - name: Run scraper
+        env:
+          API_KEY_YOUTUBE: ${{ secrets.API_KEY_YOUTUBE }}
+        run: |
+          python scraper.py "${{ github.event.inputs.query }}" ${{ github.event.inputs.max_videos }}
+
+      - name: Upload results as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: comments-${{ github.run_id }}
+          path: "*.json"
+          retention-days: 7
