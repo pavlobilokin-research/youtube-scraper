@@ -269,7 +269,7 @@ query = st.text_input(
     label_visibility="visible",
 )
 
-max_videos = st.slider("Max Videos", min_value=1, max_value=100, value=10)
+max_videos = st.slider("Max Videos 100", min_value=1, max_value=100, value=10)
 
 run = st.button("🔍  Scrape Comments")
 
