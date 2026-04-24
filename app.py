@@ -130,14 +130,14 @@ div[data-testid="metric-container"] {
     padding: 1rem 1.2rem;
 }
 div[data-testid="metric-container"] label {
-    color: #6b6b88 !important;
+    color: #f2f2f5 !important;
     font-family: 'DM Mono', monospace !important;
     font-size: 0.72rem !important;
     letter-spacing: 0.1em;
     text-transform: uppercase;
 }
 div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
-    color: #f0f0f8 !important;
+    color: #ff2d55 !important;
     font-size: 1.6rem !important;
     font-weight: 700 !important;
 }
