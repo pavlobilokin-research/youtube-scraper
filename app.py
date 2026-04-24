@@ -46,22 +46,22 @@ html, body, [class*="css"] {
 .yt-sub {
     font-family: 'DM Mono', monospace;
     font-size: 0.85rem;
-    color: #f2f2f5;
+    color: #f5f5f5;
     line-height: 1.7;
     margin-bottom: 2.5rem;
 }
 
 /* Input overrides */
 div[data-testid="stTextInput"] input {
-    background: #f5f5f5 !important;
+    background: #16161f !important;
     border: 1px solid #2a2a3a !important;
     border-radius: 11px !important;
-    color: #f5f5f5 !important;
+    color: #f0f0f8 !important;
     font-family: 'DM Mono', monospace !important;
     padding: 0.8rem 1rem !important;
 }
 div[data-testid="stTextInput"] input:focus {
-    border-color: #f5f5f5 !important;
+    border-color: #ff2d55 !important;
     box-shadow: 0 0 0 3px rgba(255,45,85,0.12) !important;
 }
 
@@ -124,7 +124,7 @@ div[data-testid="metric-container"] {
     padding: 1rem 1.2rem;
 }
 div[data-testid="metric-container"] label {
-    color: #f5f5f5 !important;
+    color: #6b6b88 !important;
     font-family: 'DM Mono', monospace !important;
     font-size: 0.72rem !important;
     letter-spacing: 0.1em;
