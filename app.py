@@ -9,7 +9,7 @@ from googleapiclient.errors import HttpError
 
 st.set_page_config(
     page_title="YT Comment Miner",
-    page_icon="🛸",
+    page_icon="🎬",
     layout="centered",
 )
 
@@ -17,280 +17,156 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
 
-html, body, [class*="css"] { font-family: 'Space Grotesk', sans-serif; }
+html, body, [class*="css"] {
+    font-family: 'Syne', sans-serif;
+}
 
-/* ── Deep space background ── */
+/* Background */
 .stApp {
-    background: #06060f;
-    color: #dcdcff;
+    background: #0a0a0f;
+    color: #f0f0f8;
 }
 
-/* Nebula layer */
-.stApp::before {
-    content: '';
-    position: fixed; inset: 0;
-    background:
-        radial-gradient(ellipse 55% 45% at 15% 55%, rgba(99,60,180,0.09) 0%, transparent 65%),
-        radial-gradient(ellipse 45% 55% at 85% 25%, rgba(56,120,240,0.07) 0%, transparent 65%),
-        radial-gradient(ellipse 35% 45% at 55% 85%, rgba(130,80,220,0.06) 0%, transparent 65%),
-        radial-gradient(ellipse 60% 30% at 50% 5%,  rgba(80,80,200,0.05) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
-}
-
-/* Star field */
-.stApp::after {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-        radial-gradient(1px 1px at  8% 12%, rgba(200,200,255,0.55) 0%, transparent 100%),
-        radial-gradient(1px 1px at 22% 38%, rgba(200,200,255,0.35) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 38%  7%, rgba(220,220,255,0.65) 0%, transparent 100%),
-        radial-gradient(1px 1px at 53% 58%, rgba(200,200,255,0.28) 0%, transparent 100%),
-        radial-gradient(1px 1px at 67% 22%, rgba(200,200,255,0.45) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 78% 68%, rgba(220,220,255,0.55) 0%, transparent 100%),
-        radial-gradient(1px 1px at 88% 42%, rgba(200,200,255,0.38) 0%, transparent 100%),
-        radial-gradient(1px 1px at 14% 77%, rgba(200,200,255,0.30) 0%, transparent 100%),
-        radial-gradient(1px 1px at 58% 88%, rgba(200,200,255,0.45) 0%, transparent 100%),
-        radial-gradient(1px 1px at 32% 62%, rgba(200,200,255,0.35) 0%, transparent 100%),
-        radial-gradient(1px 1px at 45% 32%, rgba(200,200,255,0.28) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 92% 18%, rgba(220,220,255,0.50) 0%, transparent 100%),
-        radial-gradient(1px 1px at 72%  5%, rgba(200,200,255,0.40) 0%, transparent 100%),
-        radial-gradient(1px 1px at  3% 50%, rgba(200,200,255,0.32) 0%, transparent 100%),
-        radial-gradient(1px 1px at 95% 80%, rgba(200,200,255,0.38) 0%, transparent 100%);
-    pointer-events: none; z-index: 0;
-}
-
-/* ── Layout ── */
+/* Hide Streamlit chrome */
 #MainMenu, footer, header { visibility: hidden; }
-.block-container {
-    padding-top: 4.5rem;
-    padding-bottom: 5rem;
-    max-width: 560px;
-    position: relative;
-    z-index: 1;
-}
+.block-container { padding-top: 3rem; padding-bottom: 4rem; max-width: 640px; }
 
-/* ── Header ── */
-.yt-eyebrow {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: #7c6ff7;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.yt-eyebrow::before, .yt-eyebrow::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(124,111,247,0.4));
-}
-.yt-eyebrow::after {
-    background: linear-gradient(90deg, rgba(124,111,247,0.4), transparent);
-}
-
+/* Title */
 .yt-title {
     font-size: 3rem;
-    font-weight: 700;
-    line-height: 1.08;
-    letter-spacing: -0.03em;
-    margin-bottom: 1rem;
-    color: #dcdcff;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
 }
-.yt-title em {
-    font-style: normal;
-    background: linear-gradient(125deg, #a78bfa 0%, #818cf8 40%, #60a5fa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
+.yt-title em { color: #ff2d55; font-style: normal; }
 
 .yt-sub {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.73rem;
-    color: #3a3a5c;
-    line-height: 1.85;
-    margin-bottom: 2.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: #6b6b88;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
 }
 
-/* ── Input ── */
-div[data-testid="stTextInput"] label {
-    font-family: 'Space Mono', monospace !important;
-    font-size: 0.65rem !important;
-    letter-spacing: 0.16em !important;
-    text-transform: uppercase !important;
-    color: #3a3a5c !important;
-}
+/* Input overrides */
 div[data-testid="stTextInput"] input {
-    background: rgba(124,111,247,0.04) !important;
-    border: 1px solid rgba(124,111,247,0.18) !important;
-    border-radius: 12px !important;
-    color: #dcdcff !important;
-    font-family: 'Space Mono', monospace !important;
-    font-size: 0.88rem !important;
-    padding: 0.85rem 1.1rem !important;
-    transition: all 0.25s ease !important;
+    background: #16161f !important;
+    border: 1px solid #2a2a3a !important;
+    border-radius: 11px !important;
+    color: #f0f0f8 !important;
+    font-family: 'DM Mono', monospace !important;
+    padding: 0.8rem 1rem !important;
 }
-div[data-testid="stTextInput"] input::placeholder { color: #252545 !important; }
 div[data-testid="stTextInput"] input:focus {
-    border-color: rgba(124,111,247,0.55) !important;
-    background: rgba(124,111,247,0.07) !important;
-    box-shadow: 0 0 0 3px rgba(124,111,247,0.1), 0 0 24px rgba(124,111,247,0.12) !important;
+    border-color: #ff2d55 !important;
+    box-shadow: 0 0 0 3px rgba(255,45,85,0.12) !important;
 }
 
-/* ── Slider ── */
-div[data-testid="stSlider"] label {
-    font-family: 'Space Mono', monospace !important;
-    font-size: 0.65rem !important;
-    letter-spacing: 0.16em !important;
-    text-transform: uppercase !important;
-    color: #3a3a5c !important;
-}
+/* Slider */
 div[data-testid="stSlider"] > div > div > div {
-    background: linear-gradient(90deg, #7c6ff7, #818cf8, #60a5fa) !important;
-}
-div[data-testid="stSlider"] > div > div > div > div {
-    background: #dcdcff !important;
-    border: 2px solid #7c6ff7 !important;
-    box-shadow: 0 0 14px rgba(124,111,247,0.6), 0 0 28px rgba(124,111,247,0.2) !important;
-    width: 18px !important; height: 18px !important;
+    background: #ff2d55 !important;
 }
 
-/* ── Main button ── */
+/* Button */
 div[data-testid="stButton"] > button {
-    background: linear-gradient(135deg, #6d5ce7 0%, #7c6ff7 40%, #60a5fa 100%) !important;
+    background: #ff2d55 !important;
     color: white !important;
-    font-family: 'Space Grotesk', sans-serif !important;
-    font-weight: 600 !important;
-    font-size: 0.95rem !important;
-    letter-spacing: 0.03em !important;
+    font-family: 'Syne', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
     border: none !important;
     border-radius: 12px !important;
-    padding: 0.82rem 2rem !important;
+    padding: 0.75rem 1.5rem !important;
     width: 100% !important;
-    box-shadow: 0 4px 28px rgba(109,92,231,0.4), inset 0 1px 0 rgba(255,255,255,0.15) !important;
-    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 24px rgba(255,45,85,0.4) !important;
+    transition: all 0.15s ease !important;
 }
 div[data-testid="stButton"] > button:hover {
-    box-shadow: 0 8px 44px rgba(109,92,231,0.55), inset 0 1px 0 rgba(255,255,255,0.2) !important;
-    transform: translateY(-1px) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 36px rgba(255,45,85,0.5) !important;
 }
-div[data-testid="stButton"] > button:active { transform: translateY(0) !important; }
 
-/* ── Download button ── */
+/* Download button */
 div[data-testid="stDownloadButton"] > button {
-    background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
-    color: #06060f !important;
-    font-family: 'Space Grotesk', sans-serif !important;
+    background: #4CAF72 !important;
+    color: #0a0a0f !important;
+    font-family: 'Syne', sans-serif !important;
     font-weight: 700 !important;
-    font-size: 0.95rem !important;
     border: none !important;
     border-radius: 12px !important;
     width: 100% !important;
-    padding: 0.82rem 2rem !important;
-    box-shadow: 0 4px 24px rgba(16,185,129,0.3), inset 0 1px 0 rgba(255,255,255,0.2) !important;
-    transition: all 0.2s ease !important;
+    padding: 0.75rem 1.5rem !important;
+    box-shadow: 0 4px 20px rgba(76,175,114,0.35) !important;
 }
 div[data-testid="stDownloadButton"] > button:hover {
-    box-shadow: 0 8px 36px rgba(16,185,129,0.45) !important;
+    opacity: 0.9 !important;
     transform: translateY(-1px) !important;
 }
 
-/* ── Alert boxes ── */
+/* Status boxes */
 div[data-testid="stInfo"],
 div[data-testid="stSuccess"],
 div[data-testid="stError"],
 div[data-testid="stWarning"] {
     border-radius: 12px !important;
-    font-family: 'Space Mono', monospace !important;
-    font-size: 0.75rem !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.82rem !important;
 }
 
-/* ── st.status ── */
-div[data-testid="stStatusWidget"] {
-    background: rgba(124,111,247,0.04) !important;
-    border: 1px solid rgba(124,111,247,0.18) !important;
-    border-radius: 14px !important;
-}
-div[data-testid="stStatusWidget"] p,
-div[data-testid="stStatusWidget"] span {
-    font-family: 'Space Mono', monospace !important;
-    font-size: 0.76rem !important;
-    color: #4a4a7a !important;
-}
-
-/* ── Metrics ── */
+/* Metric cards */
 div[data-testid="metric-container"] {
-    background: rgba(124,111,247,0.04);
-    border: 1px solid rgba(124,111,247,0.14);
-    border-radius: 16px;
-    padding: 1.1rem 1.2rem;
+    background: #16161f;
+    border: 1px solid #2a2a3a;
+    border-radius: 14px;
+    padding: 1rem 1.2rem;
 }
 div[data-testid="metric-container"] label {
-    font-family: 'Space Mono', monospace !important;
-    font-size: 0.62rem !important;
-    letter-spacing: 0.16em !important;
-    text-transform: uppercase !important;
-    color: #3a3a5c !important;
+    color: #6b6b88 !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
-    color: #dcdcff !important;
-    font-size: 1.65rem !important;
+    color: #f0f0f8 !important;
+    font-size: 1.6rem !important;
     font-weight: 700 !important;
-    letter-spacing: -0.02em !important;
 }
 
-/* ── Progress ── */
-div[data-testid="stProgress"] > div {
-    background: rgba(255,255,255,0.05) !important;
-    border-radius: 4px !important;
-    overflow: hidden !important;
-}
+/* Progress */
 div[data-testid="stProgress"] > div > div {
-    background: linear-gradient(90deg, #7c6ff7, #818cf8, #60a5fa) !important;
-    border-radius: 4px !important;
-    box-shadow: 0 0 12px rgba(124,111,247,0.6) !important;
+    background: #ff2d55 !important;
 }
 
-/* ── Divider ── */
-hr {
-    border: none !important;
-    border-top: 1px solid rgba(124,111,247,0.1) !important;
-    margin: 2rem 0 !important;
-}
+/* Divider */
+hr { border-color: #2a2a3a !important; margin: 1.5rem 0 !important; }
 
-/* ── Expander ── */
-div[data-testid="stExpander"] {
-    background: rgba(124,111,247,0.03) !important;
-    border: 1px solid rgba(124,111,247,0.14) !important;
+/* Log expander */
+details {
+    background: #16161f !important;
+    border: 1px solid #2a2a3a !important;
     border-radius: 12px !important;
+    padding: 0.5rem 1rem !important;
 }
-div[data-testid="stExpander"] summary {
-    font-family: 'Space Mono', monospace !important;
-    font-size: 0.72rem !important;
-    color: #3a3a5c !important;
+details summary {
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.78rem !important;
+    color: #6b6b88 !important;
+    cursor: pointer;
 }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(124,111,247,0.25); border-radius: 2px; }
 </style>
 """, unsafe_allow_html=True)
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
 st.markdown("""
-<div class="yt-eyebrow">YT Comment Miner</div>
 <div class="yt-title">Mine <em>every</em><br>comment.</div>
 <div class="yt-sub">
-  Введи запит → натисни кнопку → завантаж JSON<br>
-  API ключ зберігається в Streamlit Secrets — у браузер не потрапляє
+  Введи запит → натисни кнопку → завантаж JSON.<br>
+  API ключ зберігається в Streamlit Secrets — у браузер не потрапляє.
 </div>
 """, unsafe_allow_html=True)
 
@@ -390,7 +266,7 @@ query = st.text_input(
 
 max_videos = st.slider("Max Videos", min_value=1, max_value=100, value=10)
 
-run = st.button("✦  Scrape Comments")
+run = st.button("🔍  Scrape Comments")
 
 # ── Scrape ────────────────────────────────────────────────────────────────────
 
