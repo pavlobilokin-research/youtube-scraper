@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YT Comment Miner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --card: #16161f;
+      --border: #2a2a3a;
+      --red: #ff2d55;
+      --red-dim: rgba(255,45,85,0.12);
+      --red-glow: rgba(255,45,85,0.4);
+      --green: #4CAF72;
+      --text: #f0f0f8;
+      --muted: #6b6b88;
+      --mono: 'DM Mono', monospace;
+      --sans: 'Syne', sans-serif;
+      --repo: 'pavlobilokin-research/youtube-scraper';
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    .grid-bg {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,45,85,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,45,85,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none; z-index: 0;
+    }
+
+    .wrapper {
+      position: relative; z-index: 1;
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 64px 24px 80px;
+    }
+
+    /* ── Header ── */
+    header { margin-bottom: 52px; }
+
+    .logo-row {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
+    }
+
+    .logo-icon {
+      width: 46px; height: 46px;
+      background: var(--red); border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 28px var(--red-glow); flex-shrink: 0;
+    }
+    .logo-icon svg { width: 23px; height: 23px; fill: white; }
+
+    .logo-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); font-family: var(--mono);
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 7vw, 3.6rem);
+      font-weight: 800; line-height: 1.04; letter-spacing: -0.025em;
+    }
+    h1 em { font-style: normal; color: var(--red); }
+
+    .sub {
+      margin-top: 14px; color: var(--muted);
+      font-size: 0.88rem; font-family: var(--mono);
+      font-weight: 300; line-height: 1.75;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px 32px;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      font-family: var(--mono); color: var(--muted); margin-bottom: 22px;
+    }
+
+    .field { margin-bottom: 22px; }
+
+    label {
+      display: block; font-size: 11px; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--muted);
+      font-family: var(--mono); margin-bottom: 9px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 14px 18px;
+      color: var(--text);
+      font-family: var(--mono); font-size: 0.92rem; font-weight: 400;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input[type="text"]::placeholder { color: var(--muted); }
+    input[type="text"]:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px var(--red-dim);
+    }
+
+    /* slider */
+    .slider-row { display: flex; align-items: center; gap: 14px; }
+    input[type="range"] {
+      -webkit-appearance: none; flex: 1; height: 4px;
+      background: var(--border); border-radius: 2px; outline: none; cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px;
+      background: var(--red); border-radius: 50%;
+      box-shadow: 0 0 10px var(--red-glow); transition: transform 0.15s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .slider-val {
+      font-family: var(--mono); font-size: 1rem;
+      color: var(--red); min-width: 32px; text-align: right; font-weight: 500;
+    }
+
+    /* ── Step row ── */
+    .steps {
+      display: flex; flex-direction: column; gap: 0;
+      margin-bottom: 26px;
+    }
+
+    .step {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--red-dim); border: 1px solid rgba(255,45,85,0.25);
+      color: var(--red); font-family: var(--mono); font-size: 0.72rem;
+      font-weight: 500; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    .step-body { flex: 1; }
+    .step-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 3px; }
+    .step-desc { font-family: var(--mono); font-size: 0.74rem; color: var(--muted); line-height: 1.6; }
+    .step-desc code {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1px 6px; color: var(--text); font-size: 0.72rem;
+    }
+
+    /* ── Buttons ── */
+    .btn-row { display: flex; gap: 10px; }
+
+    .btn {
+      flex: 1; padding: 15px 20px;
+      font-family: var(--sans); font-size: 0.95rem; font-weight: 700;
+      letter-spacing: 0.02em; border: none; border-radius: 12px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+      position: relative; overflow: hidden; text-decoration: none;
+    }
+    .btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+    .btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+    .btn-primary {
+      background: var(--red); color: white;
+      box-shadow: 0 4px 20px var(--red-glow);
+    }
+    .btn-primary:hover { box-shadow: 0 8px 32px var(--red-glow); }
+    .btn-primary svg { fill: white; }
+
+    .btn-ghost {
+      background: var(--surface); color: var(--muted);
+      border: 1px solid var(--border); flex: 0 0 auto; padding: 15px 18px;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+    .btn-ghost svg { fill: currentColor; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 20px;
+      font-family: var(--mono); font-size: 0.78rem; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+      opacity: 0; z-index: 100; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast svg { width: 14px; height: 14px; fill: var(--green); flex-shrink: 0; }
+
+    /* ── Preview pill ── */
+    .preview-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--red-dim); border: 1px solid rgba(255,45,85,0.2);
+      border-radius: 8px; padding: 8px 14px;
+      font-family: var(--mono); font-size: 0.76rem; color: var(--muted);
+      margin-bottom: 14px; max-width: 100%; overflow: hidden;
+    }
+    .preview-pill span { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .preview-pill svg { width: 12px; height: 12px; fill: var(--red); flex-shrink: 0; }
+
+    footer {
+      margin-top: 36px; text-align: center;
+      font-family: var(--mono); font-size: 0.7rem; color: #2a2a3a;
+    }
+    footer a { color: #3a3a55; text-decoration: none; }
+    footer a:hover { color: var(--muted); }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<div class="wrapper">
+
+  <header>
+    <div class="logo-row">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.895 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.104 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l5.5-3.5-5.5-3.5v7z"/></svg>
+      </div>
+      <span class="logo-label">YT Comment Miner</span>
+    </div>
+    <h1>Mine <em>every</em><br>comment.</h1>
+    <p class="sub">Налаштуй запит → відкрий GitHub Actions → запусти → завантаж JSON.<br>API ключ залишається в GitHub Secrets назавжди.</p>
+  </header>
+
+  <!-- Query card -->
+  <div class="card">
+    <div class="card-title">Запит</div>
+
+    <div class="field">
+      <label>Search Query</label>
+      <input type="text" id="query" placeholder='наприклад: AI stylist app review' autocomplete="off" />
+    </div>
+
+    <div class="field" style="margin-bottom:0">
+      <label>Max Videos — <span id="valLabel">10</span></label>
+      <div class="slider-row">
+        <input type="range" id="maxVideos" min="1" max="100" value="10" />
+        <span class="slider-val" id="sliderVal">10</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="card">
+    <div class="card-title">Як запустити</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Скопіюй запит</div>
+          <div class="step-desc">Натисни кнопку нижче — запит і кількість відео скопіюються в буфер.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Відкрий GitHub Actions</div>
+          <div class="step-desc">Натисни <code>Open GitHub Actions</code> → <strong>Run workflow</strong> → встав скопійовані значення → запусти.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Завантаж результат</div>
+          <div class="step-desc">Після завершення (1–3 хв) відкрий run → розділ <code>Artifacts</code> → завантаж JSON.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-pill" id="previewPill" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+      <span id="previewText"></span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="copyBtn" onclick="copyAndGo()">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        Copy &amp; Open GitHub Actions
+      </button>
+      <a class="btn btn-ghost"
+         href="https://github.com/pavlobilokin-research/youtube-scraper/actions/workflows/scrape.yml"
+         target="_blank" title="Open Actions tab">
+        <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    YT Comment Miner · <a href="https://github.com/pavlobilokin-research/youtube-scraper" target="_blank">pavlobilokin-research/youtube-scraper</a>
+  </footer>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+  <span id="toastMsg">Скопійовано!</span>
+</div>
+
+<script>
+  const ACTIONS_URL = 'https://github.com/pavlobilokin-research/youtube-scraper/actions/workflows/scrape.yml';
+
+  const slider = document.getElementById('maxVideos');
+  slider.addEventListener('input', () => {
+    const v = slider.value;
+    document.getElementById('sliderVal').textContent = v;
+    document.getElementById('valLabel').textContent = v;
+    updatePreview();
+  });
+
+  document.getElementById('query').addEventListener('input', updatePreview);
+
+  function updatePreview() {
+    const q = document.getElementById('query').value.trim();
+    const v = slider.value;
+    const pill = document.getElementById('previewPill');
+    const txt = document.getElementById('previewText');
+    if (q) {
+      txt.textContent = `"${q}"  ·  ${v} videos`;
+      pill.style.display = 'inline-flex';
+    } else {
+      pill.style.display = 'none';
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  async function copyAndGo() {
+    const query = document.getElementById('query').value.trim();
+    if (!query) {
+      document.getElementById('query').focus();
+      showToast('⚠ Введи пошуковий запит');
+      return;
+    }
+
+    const maxVideos = slider.value;
+    const text = `Query: ${query}\nMax videos: ${maxVideos}`;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('Скопійовано! Відкриваю GitHub Actions…');
+    } catch {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Скопійовано! Відкриваю GitHub Actions…');
+    }
+
+    setTimeout(() => window.open(ACTIONS_URL, '_blank'), 600);
+  }
+
+  document.getElementById('query').addEventListener('keydown', e => {
+    if (e.key === 'Enter') copyAndGo();
+  });
+</script>
+</body>
+</html>
